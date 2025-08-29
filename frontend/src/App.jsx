@@ -8,12 +8,15 @@ import { useAuthStore } from './store/useAuthStore'
 
 function App() {
 
-  const {authUser,checkAuth} = useAuthStore();
+  const {authUser,checkAuth,isCheckingAuth} = useAuthStore();
 
 useEffect(() => {
   checkAuth()
 },[checkAuth])
 
+    if (isCheckingAuth) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
 
   return (
     <div className='min-h-screen'>

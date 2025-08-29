@@ -1,5 +1,5 @@
-import { Loader, Eye, EyeOff,Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import { Loader, Eye, EyeOff, Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,27 +14,60 @@ const LoginSchema = z.object({
 
 const Login = () => {
   const [showOtp, setShowOtp] = useState(false);
+  const [timer, setTimer] = useState(30);
+  const [isResendDisable, setIsResendDisable] = useState(true);
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm({
     resolver: zodResolver(LoginSchema),
   });
 
-  const { isOtp, sendingOtp,loginSendOtp, loginUser } = useAuthStore();
+  const { isOtp, sendingOtp, loginSendOtp, loginUser } = useAuthStore();
+
+  useEffect(() => {
+    if (!isResendDisable) return;
+
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setIsResendDisable(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isResendDisable]);
 
   const onSubmit = async (data) => {
     try {
       if (!isOtp) {
         await loginSendOtp(data);
       } else {
-        await loginUser(data)
-        navigate("/")
+        await loginUser(data);
+        navigate("/");
       }
     } catch (error) {
-      console.log("Login Failed",error)
+      console.log("Login Failed", error);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      const email = getValues("email");
+      if (email) {
+        await loginSendOtp({ email });
+        setIsResendDisable(true);
+        setTimer(30);
+      }
+    } catch (error) {
+      console.log("Error in resending otp", error);
     }
   };
 
@@ -87,38 +120,60 @@ const Login = () => {
 
             {/* OTP */}
 
-            {
-              isOtp && (
-                <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                OTP
-              </label>
-              <div className="relative">
-                <input
-                  type={showOtp ? "text" : "password"}
-                  {...register("otp")}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowOtp(!showOtp)}
-                >
-                  {showOtp ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
+            {isOtp && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  OTP
+                </label>
+                <div className="relative">
+                  <input
+                    type={showOtp ? "text" : "password"}
+                    {...register("otp")}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowOtp(!showOtp)}
+                  >
+                    {showOtp ? (
+                      <EyeOff className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+                {errors.otp && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.otp.message}
+                  </p>
+                )}
+                <div className="flex flex-col items-start gap-4">
+                  <button
+                    onClick={handleResendOtp}
+                    disabled={isResendDisable}
+                    className={`text-blue-500 text-sm font-medium hover:underline mt-5 underline ${
+                      isResendDisable ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    Resend OTP {isResendDisable && `(${timer}s)`}
+                  </button>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="keepLoggedIn"
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label
+                      htmlFor="keepLoggedIn"
+                      className="text-sm text-gray-700"
+                    >
+                      Keep me logged in
+                    </label>
+                  </div>
+                </div>
               </div>
-              {errors.otp && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.otp.message}
-                </p>
-              )}
-            </div>
-              )
-            }
+            )}
 
             {/* Submit Button */}
             <button
@@ -131,9 +186,11 @@ const Login = () => {
                   <Loader2 className="w-4 h-4 animate-spin mr-2" />
                   Sending...
                 </>
-              ) : isOtp ?  (
+              ) : isOtp ? (
                 "Sign In"
-              ) : "Get OTP" }
+              ) : (
+                "Get OTP"
+              )}
             </button>
           </div>
 
@@ -141,7 +198,7 @@ const Login = () => {
           <div className="text-center mt-6 pb-4">
             <span className="text-gray-600">Already have an account? </span>
             <Link
-              to="/login"
+              to="/register"
               className="text-blue-500 font-medium hover:underline"
             >
               Create Account

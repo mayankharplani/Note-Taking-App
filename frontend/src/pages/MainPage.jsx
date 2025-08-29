@@ -21,15 +21,15 @@ const Dashboard = () => {
   });
 
 
-  const {authUser,logout} = useAuthStore()
+  const {authUser,logout,clearAuth} = useAuthStore()
   const {isLoading,notes,createNote,getAllNotes,deleteNote} = useNoteStore()
 
   useEffect(() => {
     getAllNotes()
   },[])
 
+  console.log(authUser);
   console.log(notes);
-  console.log(authUser)
 
 
   const onSubmit = async (data) => {
@@ -37,6 +37,7 @@ const Dashboard = () => {
       await createNote(data);
       setShowForm(false);
       await getAllNotes()
+      reset();
     } catch (error) {
       console.log("Error in creating note submission",error)
     }
@@ -56,6 +57,7 @@ const Dashboard = () => {
   const handleLogout = async () => {
     try {
       await logout();
+      await clearAuth()
     } catch (error) {
       console.log("Error in logout",error)
     }
