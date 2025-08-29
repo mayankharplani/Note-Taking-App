@@ -6,8 +6,8 @@ export const sendEmail = async (email, otp) => {
     host: "smtp.gmail.com",
     port: 465,
     auth: {
-      user: "mharp1603@gmail.com",
-      pass: "psxowttptwmlemju",
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS,
     },
   });
 
