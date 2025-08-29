@@ -5,9 +5,9 @@ import jwt from "jsonwebtoken";
 import { generateOtp } from "../utils/generateOtp.js";
 
 export const registerSend = async (req, res) => {
-  const { email, dob,name } = req.body;
+  const { email, dob } = req.body;
   try {
-    if (!email || !dob || !name) {
+    if (!email || !dob) {
       return res.status(404).json({
         success: false,
         message: "All fields are required",
@@ -68,6 +68,7 @@ export const registerVerify = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Signup Successfully",
+      user
     });
   } catch (error) {
     console.log("Error in signup:", error);
@@ -136,7 +137,8 @@ export const loginVerify = async (req, res) => {
     });
     res.status(200).json({
         success: true,
-        message: "Login Successfully"
+        message: "Login Successfully",
+        user
     })
   } catch (error) {
     console.log("Error in Verify logging",error)
@@ -168,5 +170,22 @@ export const logout = async (req,res) => {
       message: "Logout Failed",
       error
     })
+  }
+}
+
+
+
+export const check = async (req,res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      message: "user Authenticated Succesfuly",
+      user: req.user,
+    });
+  } catch (error) {
+    console.log("Error authentication error", error);
+    res.status(500).json({
+      error: "Error Authenticating User",
+    });
   }
 }
