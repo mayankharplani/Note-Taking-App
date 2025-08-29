@@ -19,4 +19,5 @@ authRoutes.get("/check",authMiddleware,check)
 authRoutes.post("/logout",logout)
 
 
+
 export default authRoutes

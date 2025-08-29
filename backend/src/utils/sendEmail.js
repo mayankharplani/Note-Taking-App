@@ -1,34 +1,32 @@
 import nodemailer from "nodemailer";
-import Mailgen from "mailgen"
 
 export const sendEmail = async (email, otp) => {
-  const mailGenerator = new Mailgen({
-    theme: "default",
-    product: {
-      name: "Testing App",
-      link: "https://mailgen.js/",
-    },
-  });
   const transporter = nodemailer.createTransport({
-    host: process.env.MAILTRAP_HOST,
-    port: process.env.MAILTRAP_PORT,
-    secure: false, // true for port 465, false for other ports
+    secure: true,
+    host: "smtp.gmail.com",
+    port: 465,
     auth: {
-      user: process.env.MAILTRAP_USERNAME,
-      pass: process.env.MAILTRAP_PASSWORD,
+      user: "mharp1603@gmail.com",
+      pass: "psxowttptwmlemju",
     },
   });
 
-  const emailOps = {
-    from: "mail.notetakingapp@example.com", // sender address
-    to: email, // list of receivers
-    subject: "Your OTP Code",
-    text: `Your OTP is ${otp}. It is valid for 5 minutes.`
-
+  const decorationEmail = {
+    from: "mharp1603@gmail.com",
+    to: email,
+    subject: "HD App - Your OTP Code",
+    html: `<div style="font-family:Arial,Helvetica,sans-serif;line-height:1.6;">
+              <h2>HD App - Your OTP</h2>
+              <p>Use the code below to continue:</p>
+          <div style="font-size:24px;font-weight:bold;letter-spacing:4px;">${otp}</div>
+            <p>This code expires in 5 minutes. If you didn’t request it, you can ignore this email.</p>
+           </div>`,
+    text: `Your HD App OTP is ${otp}`
   };
+
   try {
-    await transporter.sendMail(emailOps)
+    await transporter.sendMail(decorationEmail);
   } catch (error) {
-    console.log("Error in sending Email: ",error)
+    console.log("Error in sending Email: ", error);
   }
 };

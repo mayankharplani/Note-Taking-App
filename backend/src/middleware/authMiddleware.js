@@ -4,9 +4,9 @@ import { User } from "../models/userModel.js"
 
 export const authMiddleware = async (req,res,next) => {
     try {
-        let token = req.cookies.jwt;
+        let token = req.cookies?.jwt;
         if(!token){
-            return res.status(404).json({
+            return res.status(401).json({
                 success: false,
                 message: "Unauthorized to Perform"
             })
