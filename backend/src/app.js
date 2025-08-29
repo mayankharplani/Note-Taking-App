@@ -1,6 +1,10 @@
 import express from "express"
 import cookieParser from "cookie-parser"
+
+
 import authRoutes from "./routes/authRoutes.js";
+import noteRoutes from "./routes/noteRoutes.js";
+
 
 const app = express();
 
@@ -15,6 +19,8 @@ app.get("/",(req,res) => {
 
 
 app.use("/api/v1/auth",authRoutes)
+
+app.use("/api/v1/note",noteRoutes)
 
 
 

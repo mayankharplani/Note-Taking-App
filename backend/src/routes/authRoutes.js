@@ -1,5 +1,5 @@
 import express from "express"
-import { loginSend, loginVerify, registerSend, registerVerify } from "../controllers/authController.js";
+import { loginSend, loginVerify, logout, registerSend, registerVerify } from "../controllers/authController.js";
 
 const authRoutes = express.Router();
 
@@ -11,6 +11,9 @@ authRoutes.post("/login/send", loginSend)
 
 
 authRoutes.post("/login/verify", loginVerify)
+
+
+authRoutes.post("/logout",logout)
 
 
 export default authRoutes

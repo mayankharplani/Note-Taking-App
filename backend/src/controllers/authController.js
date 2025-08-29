@@ -5,9 +5,9 @@ import jwt from "jsonwebtoken";
 import { generateOtp } from "../utils/generateOtp.js";
 
 export const registerSend = async (req, res) => {
-  const { email, dob } = req.body;
+  const { email, dob,name } = req.body;
   try {
-    if (!email || !dob) {
+    if (!email || !dob || !name) {
       return res.status(404).json({
         success: false,
         message: "All fields are required",
@@ -41,7 +41,7 @@ export const registerSend = async (req, res) => {
 };
 
 export const registerVerify = async (req, res) => {
-  const { email, dob, otp } = req.body;
+  const { email, dob, otp,name } = req.body;
   try {
     const userOtp = await Otp.findOne({ email, otp });
     if (!userOtp)
@@ -50,7 +50,7 @@ export const registerVerify = async (req, res) => {
         message: "Invalid or expired OTP",
       });
 
-    const user = new User({ email, dob: new Date(dob) });
+    const user = new User({ email, dob: new Date(dob),name });
     await user.save();
     await Otp.deleteMany({ email });
 
@@ -147,3 +147,26 @@ export const loginVerify = async (req, res) => {
     })
   }
 };
+
+
+
+export const logout = async (req,res) => {
+  try {
+    res.clearCookie("jwt",{
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV !== "development",
+    })
+    res.status(200).json({
+      success: true,
+      message: "Loggedout Successfully"
+    })
+  } catch (error) {
+    console.log("Error in logout: ",error);
+    res.status(500).json({
+      success: false,
+      message: "Logout Failed",
+      error
+    })
+  }
+}
