@@ -8,7 +8,6 @@ import { Notes } from "../models/notesModel.js";
 export const createNote = async (req,res) => {
     const {content} = req.body;
     const userId = req.user._id
-    console.log(userId)
     try {
         if(!userId){
             return res.status(404).json({
@@ -86,6 +85,10 @@ export const getAllNotes = async (req,res) => {
             notes
         })
     } catch (error) {
-        
+        console.log("Error in fetching notes",error)
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch all notes"
+        })
     }
 }

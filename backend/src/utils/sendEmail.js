@@ -12,7 +12,7 @@ export const sendEmail = async (email, otp) => {
   });
 
   const decorationEmail = {
-    from: "mharp1603@gmail.com",
+    from: process.env.GMAIL_USER,
     to: email,
     subject: "HD App - Your OTP Code",
     html: `<div style="font-family:Arial,Helvetica,sans-serif;line-height:1.6;">

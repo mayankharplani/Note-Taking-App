@@ -21,7 +21,6 @@ export const registerSend = async (req, res) => {
     }
 
     const otp = generateOtp();
-    console.log(otp);
     await Otp.deleteMany({ email });
     await new Otp({ email, otp }).save();
 
