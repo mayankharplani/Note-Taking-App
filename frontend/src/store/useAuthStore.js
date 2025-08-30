@@ -61,11 +61,15 @@ export const useAuthStore = create(
           set({ sendingOtp: true });
           const res = await axiosInstance.post("/auth/login/send", data);
           set({ isOtp: true });
+          if(!res)
           toast("OTP Sent Successfully", {
             position: "bottom-left",
           });
         } catch (error) {
           console.log("Error in Sending Login OTP", error);
+          toast("Please Register Yourself First",{
+            position: "bottom-left"
+          });
         } finally {
           set({ sendingOtp: false });
         }
