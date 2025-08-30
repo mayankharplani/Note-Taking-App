@@ -33,7 +33,6 @@ const SignUp = () => {
   const onSubmit = async (data) => {
     const [date, month, year] = data.dob.split(" ");
     data.dob = `${year}-${month}-${date}`;
-    console.log("Form Data ✅", data);
 
     try {
       if (!isOtp) {

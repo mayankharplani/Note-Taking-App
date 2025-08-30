@@ -11,7 +11,7 @@ export const useNoteStore = create((set) => ({
     getAllNotes: async () => {
         try {
             set({isLoading: true});
-            const res = await axiosInstance.get("/note/get-all-notes");
+            const res = await axiosInstance.get("/note/get-all-notes",{withCredentials: true});
             set({notes: res.data.notes})
         } catch (error) {
             console.log("Error in fetching notes:",error)
@@ -22,11 +22,9 @@ export const useNoteStore = create((set) => ({
     },
 
     createNote: async (data) => {
-        console.log(data)
         try {
             set({isLoading: true});
             const res = await axiosInstance.post("/note/create",data);
-            console.log(res.data)
             set({note: res.data.note})
             set((state) => ({
                 notes: [...state.notes,res.data.note]

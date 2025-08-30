@@ -91,9 +91,9 @@ export const useAuthStore = create(
         try {
           set({sendingOtp: true});
           const res = await axiosInstance.post("/auth/resend-otp",data);
-          
         } catch (error) {
-          
+          console.log("Error resending OTP",error)
+          toast("Failed to Send OTP")
         }
       },
 

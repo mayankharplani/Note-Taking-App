@@ -28,8 +28,6 @@ const Dashboard = () => {
     getAllNotes()
   },[])
 
-  console.log(authUser);
-  console.log(notes);
 
 
   const onSubmit = async (data) => {
